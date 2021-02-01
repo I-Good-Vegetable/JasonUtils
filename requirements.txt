@@ -1,0 +1,6 @@
+beepy>=1.0.7
+matplotlib>=3.3.4
+numpy>=1.20.0
+pandas>=1.2.1
+imblearn>=0.0
+scikit-learn>=0.24.1
