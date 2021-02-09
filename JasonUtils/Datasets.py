@@ -176,6 +176,19 @@ def loadUnswNb15(folder, shuffleDataset=False, randomState=None):
     return trainingX, testingX, trainingY, testingY
 
 
+def loadBankChurners(folder, shuffleDataset=False, randomState=None, testSize: Optional[float] = 0.33):
+    filepath = Path(folder) / 'BankChurners.csv'
+    yColName = 'Attrition_Flag'
+    xDropColNames = ['CLIENTNUM',
+                     'Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_'
+                     'Dependent_count_Education_Level_Months_Inactive_12_mon_1',
+                     'Naive_Bayes_Classifier_Attrition_Flag_Card_Category_Contacts_Count_12_mon_'
+                     'Dependent_count_Education_Level_Months_Inactive_12_mon_2',
+                     'Attrition_Flag']
+    return loadSingleFileDataset(filepath, yColName, xDropColNames,
+                                 shuffleDataset, randomState, testSize)
+
+
 def loadDataset(name, folder, shuffleDataset=False, randomState=None, **kwargs):
     datasetDict = {
         'NextCon2020': loadNextCon2020,
@@ -183,5 +196,7 @@ def loadDataset(name, folder, shuffleDataset=False, randomState=None, **kwargs):
         'CicIds2017': loadCicIds2017,
         'NslKdd': loadNslKdd,
         'UnswNb15': loadUnswNb15,
+
+        'BankChurners': loadBankChurners,
     }
     return datasetDict[name](folder, shuffleDataset, randomState, **kwargs)
