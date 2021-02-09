@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.utils import shuffle
 
+from JasonUtils.Utils import tupleAppend
+
 
 def loadNextCon2020(folder, shuffleDataset=False, randomState=None,
                     withLocalNormalTraffic=False):
@@ -200,3 +202,31 @@ def loadDataset(name, folder, shuffleDataset=False, randomState=None, **kwargs):
         'BankChurners': loadBankChurners,
     }
     return datasetDict[name](folder, shuffleDataset, randomState, **kwargs)
+
+
+def ordinalEncode(trX, teX=None, numFirst=True, returnEncoder=False):
+    _, dim = trX.shape
+    if numFirst:
+        encodedMask = list()
+        for index in range(dim):
+            try:
+                trX[:, index] = trX[:, index].astype(float)
+            except ValueError:
+                encodedMask.append(index)
+        encodedMask = np.array([(index in encodedMask) for index in range(dim)])
+    else:
+        encodedMask = np.ones(dim, dtype=bool)
+
+    encoder = OrdinalEncoder().fit(trX[:, encodedMask])
+    trX[:, encodedMask] = encoder.transform(trX[:, encodedMask])
+
+    if teX is not None:
+        teX[:, ~encodedMask] = teX[:, ~encodedMask].astype(float)
+        teX[:, encodedMask] = encoder.transform(teX[:, encodedMask])
+
+    retTuple = (trX,)
+    if teX is not None:
+        retTuple = tupleAppend(retTuple, teX)
+    if returnEncoder:
+        retTuple = tupleAppend(retTuple, returnEncoder)
+    return retTuple
